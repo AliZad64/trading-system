@@ -14,8 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('logout', [\App\Http\Controllers\AuthController::class,"Logout"]);
 });
 Route::post('createaccount',[\App\Http\Controllers\AuthController::class, 'createAccount']);
 Route::post('loginaccount', [\App\Http\Controllers\AuthController::class, 'login']);
