@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -63,9 +64,21 @@ class AuthController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, ProfileUpdateRequest $updateValue)
     {
-        //
+
+        $user = $request->user();
+        $profile = Profile::where('user_id',$user->id)->first();
+        $profile->birthdate = $updateValue->birthdate;
+        $profile->age = $updateValue->age;
+        $profile->save();
+        return response()->json([
+            'status'=> 'ok',
+            'data'=>[
+                'profile'=> $profile,
+            ]
+
+        ], 201);
     }
 
     /**
