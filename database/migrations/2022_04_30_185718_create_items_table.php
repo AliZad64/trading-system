@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Profile::class, 'profile_id');
             $table->string('name',255);
-
+            $table->text('tradedetail')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

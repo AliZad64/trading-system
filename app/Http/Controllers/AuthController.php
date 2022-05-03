@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\AuthControllerRequest;
@@ -84,13 +85,19 @@ class AuthController extends Controller
             'password' => bcrypt($request['password']),
             'email' => $request['email']
         ]);
+        //after user creation we create new profile linked to that user
+        $profile = Profile::create([
+            'user_id' => $user->id
+        ]);
+
         $token = $user->createToken('tokens')->plainTextToken;
         return response()->json([
             'status'=> 'ok',
             'data'=>[
-                'user' => $user,
+                 'profile'=> $profile,
                 'token' => $token,
-            ]
+                    ]
+
         ], 201);
     }
     public function login( AuthLoginRequest $request)
