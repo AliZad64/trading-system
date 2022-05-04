@@ -2,18 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ItemRequest;
+use App\Models\Item;
+use App\Models\Profile;
+use http\Client\Curl\User;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
+
+    public function allItems()
+    {
+        return response()->json(Item::all(),200);
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = $request->user();
+        $profile = Profile::where('user_id',$user->id)->first();
+        return response()->json($profile->item, 200);
     }
 
     /**
@@ -22,9 +33,15 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request ,ItemRequest $payload)
     {
-        //
+        $user = $request->user();
+        $profile = Profile::where('user_id',$user->id)->first();
+        $item = Item::create([
+            'name' => $payload->name,
+            'profile_id' => $profile->id,
+        ]);
+        return response()->json($item,201);
     }
 
     /**
@@ -35,7 +52,8 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-        //
+        $item = Item::find($id);
+        return response()->json($item,200);
     }
 
     /**
@@ -47,7 +65,8 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = $request->user();
+        $profile = Profile::where('user_id',$user->id)->first();
     }
 
     /**

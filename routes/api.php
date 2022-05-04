@@ -15,12 +15,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function() {
+    Route::post('logout', [\App\Http\Controllers\AuthController::class,"Logout"]);
+    Route::put('update', [\App\Http\Controllers\AuthController::class, 'update']);
+    Route::post('item_store',[\App\Http\Controllers\ItemController::class, 'store']);
+    Route::get('items', [\App\Http\Controllers\ItemController::class,'index']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::post('logout', [\App\Http\Controllers\AuthController::class,"Logout"]);
-    Route::put('update', [\App\Http\Controllers\AuthController::class, 'update']);
 });
+Route::get("all_items", [\App\Http\Controllers\ItemController::class, 'allItems']);
 Route::post('createaccount',[\App\Http\Controllers\AuthController::class, 'createAccount']);
 Route::post('loginaccount', [\App\Http\Controllers\AuthController::class, 'login']);
 
