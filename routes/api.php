@@ -19,10 +19,13 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::put('update', [\App\Http\Controllers\AuthController::class, 'update']);
     Route::post('item_store',[\App\Http\Controllers\ItemController::class, 'store']);
     Route::get('items', [\App\Http\Controllers\ItemController::class,'index']);
+    Route::put('/item/{id}',[\App\Http\Controllers\ItemController::class, 'update']);
+    Route::delete("/item/{id}",[\App\Http\Controllers\ItemController::class, 'destroy']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 });
+Route::get('/item/{id}', [\App\Http\Controllers\ItemController::class, 'show']);
 Route::get("all_items", [\App\Http\Controllers\ItemController::class, 'allItems']);
 Route::post('createaccount',[\App\Http\Controllers\AuthController::class, 'createAccount']);
 Route::post('loginaccount', [\App\Http\Controllers\AuthController::class, 'login']);

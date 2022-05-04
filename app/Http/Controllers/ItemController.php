@@ -63,10 +63,22 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, ItemRequest $payload)
     {
         $user = $request->user();
         $profile = Profile::where('user_id',$user->id)->first();
+        $item = Item::find($id);
+        if (!$item) {
+            return response()->json("item doesn't exist",404);
+        }
+        if ($item->profile->id != $profile->id)
+        {
+            return response()->json('unauthorized',403);
+        }
+        $item->name = $payload->name;
+        $item->save();
+        return response()->json($item,200);
+
     }
 
     /**
@@ -75,8 +87,19 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+        $user = $request->user();
+        $profile = Profile::where('user_id',$user->id)->first();
+        $item = Item::find($id);
+        if (!$item) {
+            return response()->json("item doesn't exist",404);
+        }
+        if ($item->profile != $profile->id)
+        {
+            return response()->json('unauthorized',403);
+        }
+        $item->delete();
+        return response()->json('item deleted',204);
     }
 }
