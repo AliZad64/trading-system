@@ -18,12 +18,12 @@ class Trade extends Model
     {
         return $this->belongsTo(Profile::class);
     }
-    public function item1()
+    public function itemSendObject()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'itemSend', 'id');
     }
-    public function item2()
+    public function itemReceiveObject()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'itemReceive', 'id');
     }
 }

@@ -15,22 +15,22 @@ class Item extends Model
         return $this->belongsTo(Profile::class);
     }
 
-    public function matched1()
+    public function sendTrade()
     {
-        return $this->hasMany(Trade::class,'item_1');
+        return $this->hasMany(Trade::class,'itemSend');
     }
 
-    public function matched2()
+    public function receiveTrade()
     {
-        return $this->hasMany(Trade::class,'item_2');
+        return $this->hasMany(Trade::class,'itemReceive');
     }
 
-    public function otherItem()
+    public function allTrade()
     {
-        if($this->matched1->id == $this->id) {
-        return $this->matched1;
+        if($this->sendTrade->id == $this->id) {
+        return $this->sendTrade;
 
     }
-        return $this->matched2;
+        return $this->itemReceive;
     }
 }
