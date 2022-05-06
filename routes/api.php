@@ -23,6 +23,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete("item/{id}",[\App\Http\Controllers\ItemController::class, 'destroy']);
     Route::post('trade', [\App\Http\Controllers\TradeController::class, 'store']);
     Route::get('trade', [\App\Http\Controllers\TradeController::class, 'index']);
+    Route::get('trade/{id}', [\App\Http\Controllers\TradeController::class,'show']);
+    Route::put('trade/{id}', [\App\Http\Controllers\TradeController::class, 'update']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

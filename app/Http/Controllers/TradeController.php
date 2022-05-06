@@ -80,7 +80,8 @@ class TradeController extends Controller
         $user = $request->user();
         $profile = Profile::where('user_id',$user->id)->first();
         $trade = Trade::find($id);
-        if ($trade->itemSendObject->profile->id == $profile->id || $trade->itemRecieveObject->profile->id == $profile->id)
+
+        if ($trade->itemSendObject->profile->id == $profile->id || $trade->itemReceiveObject->profile->id == $profile->id)
         {
             return response()->json($trade,200);
         }
