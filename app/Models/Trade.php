@@ -10,14 +10,7 @@ class Trade extends Model
     protected $fillable = ['profile_id','confirmation','description','type', 'item1_id'];
     use HasFactory;
 
-    public function senderProfile()
-    {
-        return $this->belongsTo(Profile::class);
-    }
-    public function confirmProfile()
-    {
-        return $this->belongsTo(Profile::class);
-    }
+
     public function itemSendObject()
     {
         return $this->belongsTo(Item::class, 'itemSend', 'id');

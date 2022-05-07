@@ -6,7 +6,9 @@ use App\Http\Requests\TradeRequest;
 use App\Models\Item;
 use App\Models\Profile;
 use App\Models\Trade;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TradeController extends Controller
 {
@@ -97,37 +99,32 @@ class TradeController extends Controller
      */
     public function update(Request $request,TradeRequest $payload, $id)
     {
-        $user = $request->user();
-        $profile = Profile::where('user_id',$user->id)->first();
-        $itemSend = Item::find($payload->itemSend);
 
-        $itemReceive = Item::find($payload->itemReceive);
+        $profile = $request->user()->profile;
+        try {
+            $itemSend = Item::where('id','=',$payload->itemSend)->where('profile_id','=',$profile->id)->firstOrFail();
 
-        //check if item exists
-        if (!$itemSend || !$itemReceive){
-            return response()->json("item doesn't exist",404);
+
+            $itemReceive = Item::findOrFail($payload->itemReceive);
         }
-        //check if the item you are sending is yours
-        if ($itemSend->profile->id != $profile->id)
-        {
-            return response()->json('this is not your item',400);
+        catch (ModelNotFoundException) {
+            return response()->json('item doesnt exist', 404);
         }
-        //check if the item you taking is not yours
+
+
+
+        //check if the item you are taking is not yours
         if ($itemReceive->profile->id == $profile->id)
         {
             return response()->json('dont trade with your own inventory',400);
         }
-        $trade = Trade::find($id);
+        Trade::where('id','=',$id)->where('confirmation', '=', $profile->id)->firstOrFail()->update([
+            'itemSend' => $itemSend->id,
+            'itemReceive' => $itemReceive->id,
+            'confirmation' => $itemReceive->profile->id
+        ]);
         //check if confirmation by the received user
-        if($trade->confirmation == $profile->id)
-        {
-            $trade['itemSend'] = $itemSend->id;
-            $trade['itemReceive '] = $itemReceive->id;
-            $trade['confirmation'] = $itemReceive->profile->id;
-            $trade->save();
-            return response()->json($trade,201);
-        }
-        return response()->json("unauthorized",403);
+        return response()->json('trade successfully',201);
     }
 
     /**
