@@ -65,8 +65,7 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id, ItemRequest $payload)
     {
-        $user = $request->user();
-        $profile = Profile::where('user_id',$user->id)->first();
+        $profile = $request->user()->profile;
         $item = Item::find($id);
         if (!$item) {
             return response()->json("item doesn't exist",404);
