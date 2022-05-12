@@ -148,11 +148,12 @@ class TradeController extends Controller
         ]);
         Item::create([
             'name' => $trade->itemReceiveObject->name,
-            'profile_id'=> $trade->itemReceiveObject->profile->id,
+            'profile_id'=> $trade->itemSendObject->profile->id,
         ]);
         //we delete items so any old connection of trade request to these items will be cascaded
-        Item::firstOrFail($trade->itemSendObject->id)->delete();
-        Item::firstOrFail($trade->itemReceiveObject->id)->delete();
-        return respone()->json('request has been confirmed successfully',201);
+        Item::where('id', $trade->itemSendObject->id)->firstOrFail()->delete();
+        Item::where('id', $trade->itemReceiveObject->id)->firstOrFail()->delete();
+        $trade->delete();
+        return response()->json('request has been confirmed successfully',201);
     }
 }

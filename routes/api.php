@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('trade', [\App\Http\Controllers\TradeController::class, 'index']);
     Route::get('trade/{id}', [\App\Http\Controllers\TradeController::class,'show']);
     Route::put('trade/{id}', [\App\Http\Controllers\TradeController::class, 'update']);
+    Route::post('trade/{id}', [\App\Http\Controllers\TradeController::class, 'confirm']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
