@@ -71,7 +71,7 @@ class ItemController extends Controller
         catch (ModelNotFoundException) {
             return response()->json('item doesnt exist', 404);
         }
-        if ($item->allTrade->exists()){
+        if ($item->sendTrade->count() > 0 || $item->receiveTrade->count()> 0){
             return response()->json("the item is being used for trade requests right now",400);
         }
         $item->name = $payload->name;
@@ -96,6 +96,6 @@ class ItemController extends Controller
             return response()->json('item doesnt exist', 404);
         }
         $item->delete();
-        return response()->json('item deleted',204);
+        return response()->json('item deleted',201);
     }
 }

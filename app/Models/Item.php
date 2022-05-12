@@ -31,6 +31,6 @@ class Item extends Model
         return $this->sendTrade;
 
     }
-        return $this->itemReceive;
+        return $this->receiveTrade;
     }
 }

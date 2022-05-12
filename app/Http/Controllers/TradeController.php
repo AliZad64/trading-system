@@ -139,7 +139,7 @@ class TradeController extends Controller
             $trade = Trade::where('id',$id)->where('confirmation',$profile->id)->firstOrFail();
         }
         catch (ModelNotFoundException){
-            return response()->json("trade request not found", 404);
+            return response()->json("trade request or confirmation not found", 404);
         }
         //we create new items
         Item::create([

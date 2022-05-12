@@ -103,6 +103,6 @@ class AuthController extends Controller
         request()->user()->tokens()->delete();
         return response()->json([
             'success'=> 'user has logged out successfully',
-        ], 204);
+        ], 201);
     }
 }
