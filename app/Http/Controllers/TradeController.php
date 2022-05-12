@@ -59,7 +59,7 @@ class TradeController extends Controller
 //        echo $itemReceive->profile->id;
         $trade = new Trade;
         $trade['itemSend'] = $itemSend->id;
-        $trade['itemReceive '] = $itemReceive->id;
+        $trade['itemReceive'] = $itemReceive->id;
         $trade['confirmation'] = $itemReceive->profile->id;
         $trade->save();
         return response()->json($trade,201);

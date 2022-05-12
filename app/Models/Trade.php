@@ -17,6 +17,6 @@ class Trade extends Model
     }
     public function itemReceiveObject()
     {
-        return $this->belongsTo(Item::class, 'itemReceive ', 'id');
+        return $this->belongsTo(Item::class, 'itemReceive', 'id');
     }
 }
