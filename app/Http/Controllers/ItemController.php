@@ -6,6 +6,7 @@ use App\Http\Requests\ItemRequest;
 use App\Models\Item;
 use App\Models\Profile;
 use http\Client\Curl\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -35,8 +36,7 @@ class ItemController extends Controller
      */
     public function store(Request $request ,ItemRequest $payload)
     {
-        $user = $request->user();
-        $profile = Profile::where('user_id',$user->id)->first();
+        $profile = $request->user()->profile;
         $item = Item::create([
             'name' => $payload->name,
             'profile_id' => $profile->id,
@@ -66,13 +66,14 @@ class ItemController extends Controller
     public function update(Request $request, $id, ItemRequest $payload)
     {
         $profile = $request->user()->profile;
-        $item = Item::find($id);
-        if (!$item) {
-            return response()->json("item doesn't exist",404);
+        try {
+            $item = Item::where('id', $id)->where('profile_id', $profile->id)->firstOrFail();
         }
-        if ($item->profile->id != $profile->id)
-        {
-            return response()->json('unauthorized',403);
+        catch (ModelNotFoundException) {
+            return response()->json('item doesnt exist', 404);
+        }
+        if ($item->allTrade->exists()){
+            return response()->json("the item is being used for trade requests right now",400);
         }
         $item->name = $payload->name;
         $item->save();
@@ -88,15 +89,12 @@ class ItemController extends Controller
      */
     public function destroy(Request $request,$id)
     {
-        $user = $request->user();
-        $profile = Profile::where('user_id',$user->id)->first();
-        $item = Item::find($id);
-        if (!$item) {
-            return response()->json("item doesn't exist",404);
+        $profile = $request->user()->profile;
+        try {
+            $item = Item::where('id', $id)->where('profile_id', $profile->id)->firstOrFail();
         }
-        if ($item->profile != $profile->id)
-        {
-            return response()->json('unauthorized',403);
+        catch (ModelNotFoundException) {
+            return response()->json('item doesnt exist', 404);
         }
         $item->delete();
         return response()->json('item deleted',204);
