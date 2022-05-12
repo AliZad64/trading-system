@@ -23,8 +23,7 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-        $profile = Profile::where('user_id',$user->id)->first();
+        $profile = $request->user()->profile;
         return response()->json($profile->item, 200);
     }
 
