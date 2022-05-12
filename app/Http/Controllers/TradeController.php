@@ -16,6 +16,7 @@ class TradeController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * MUSTAFA ALI HELP
      */
     public function index(Request $request)
     {
@@ -23,8 +24,9 @@ class TradeController extends Controller
 
         //get all trades related to user
         $trade = Trade::with(['itemSendObject'=> function($query) use ($profile){
-            $query->where('profile_id', 'like', $profile->id);
+            $query->where('profile_id', '=', $profile->id);
         }])->get();
+//        $trade = Trade::find(2)->itemSendObject->where('profile_id',$profile->id)->get();
 
         return response()->json($trade,200);
 
@@ -55,11 +57,11 @@ class TradeController extends Controller
             return response()->json('dont trade with your own inventory',400);
         }
 //        echo $itemReceive->profile->id;
-        $trade = Trade::create([
-            'itemSend' => $itemSend->id,
-            'itemReceive' => $itemReceive->id,
-            'confirmation' => $itemReceive->profile->id
-        ]);
+        $trade = new Trade;
+        $trade['itemSend'] = $itemSend->id;
+        $trade['itemReceive '] = $itemReceive->id;
+        $trade['confirmation'] = $itemReceive->profile->id;
+        $trade->save();
         return response()->json($trade,201);
 
     }
@@ -128,5 +130,29 @@ class TradeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function confirm(Request $request,$id)
+    {
+        $profile = $request->user()->profile;
+        try {
+            $trade = Trade::where('id',$id)->where('confirmation',$profile->id)->firstOrFail();
+        }
+        catch (ModelNotFoundException){
+            return response()->json("trade request not found", 404);
+        }
+        //we create new items
+        Item::create([
+            'name' => $trade->itemSendObject->name,
+            'profile_id'=> $trade->itemReceiveObject->profile->id,
+        ]);
+        Item::create([
+            'name' => $trade->itemReceiveObject->name,
+            'profile_id'=> $trade->itemReceiveObject->profile->id,
+        ]);
+        //we delete items so any old connection of trade request to these items will be cascaded
+        Item::firstOrFail($trade->itemSendObject->id)->delete();
+        Item::firstOrFail($trade->itemReceiveObject->id)->delete();
+        return respone()->json('request has been confirmed successfully',201);
     }
 }
