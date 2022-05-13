@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -68,12 +69,8 @@ class AuthController extends Controller
 
         $token = $user->createToken('tokens')->plainTextToken;
         return response()->json([
-            'status'=> 'ok',
-            'data'=>[
-                 'profile'=> $user,
-                'token' => $token,
-                    ]
-
+            'data'=> new UserResource($user),
+            'token' => $token,
         ], 201);
     }
     public function login( AuthLoginRequest $request)
@@ -89,8 +86,8 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken('token')->plainTextToken;
         return response()->json([
-                'user' => $user,
-                'token' => $token,
+            'data'=> new UserResource($user),
+            'token' => $token,
         ], 201);
 
     }
