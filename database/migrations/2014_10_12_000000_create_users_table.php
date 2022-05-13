@@ -23,7 +23,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->onDelete('cascade');
-            $table->date('birthdate')->nullable();
+            $table->integer('age')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
