@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
+use App\Http\Resources\ItemResource;
 use App\Models\Item;
 
 use http\Client\Curl\User;
@@ -14,7 +15,7 @@ class ItemController extends Controller
 
     public function allItems()
     {
-        return response()->json(Item::all(),200);
+        return ItemResource::collection(Item::all());
     }
     /**
      * Display a listing of the resource.
@@ -24,7 +25,7 @@ class ItemController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        return response()->json($user->item, 200);
+        return ItemResource::collection($user->items);
     }
 
     /**
@@ -35,12 +36,19 @@ class ItemController extends Controller
      */
     public function store(Request $request ,ItemRequest $payload)
     {
-        $user = $request->user();
-        $item = Item::create([
-            'name' => $payload->name,
-            'user_id' => $user->id,
-        ]);
-        return response()->json($item,201);
+        $item = new Item();
+        $item['user_id'] = $request->user()->id;
+        $item['name'] = $payload->name;
+        $item['image'] = "testing";
+        $item->save();
+
+        //commented code doesn't work and i don't know why
+//        $item = Item::create([
+//            'user_id' => $request->user()->id,
+//            'name' => $payload->name,
+//            'image' => "testing"
+//        ]);
+        return new ItemResource($item);
     }
 
     /**
@@ -52,7 +60,7 @@ class ItemController extends Controller
     public function show($id)
     {
         $item = Item::find($id);
-        return response()->json($item,200);
+        return new ItemResource($item);
     }
 
     /**
@@ -76,7 +84,7 @@ class ItemController extends Controller
         }
         $item->name = $payload->name;
         $item->save();
-        return response()->json($item,200);
+        return new ItemResource($item);
 
     }
 
