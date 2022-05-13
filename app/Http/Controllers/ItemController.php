@@ -36,10 +36,16 @@ class ItemController extends Controller
      */
     public function store(Request $request ,ItemRequest $payload)
     {
+        $imageFile = $payload->image;
+        $path = $imageFile->store('public/images');
+        $name = $imageFile->getClientOriginalName();
+//        $imageName = time().'.'.$payload->image->extension();
+//        $getImage = $payload->image;
+//        $getImage->move(public_path('images'), $imageName);
         $item = new Item();
         $item['user_id'] = $request->user()->id;
         $item['name'] = $payload->name;
-        $item['image'] = "testing";
+        $item['image'] = $path;
         $item->save();
 
         //commented code doesn't work and i don't know why

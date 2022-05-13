@@ -24,7 +24,8 @@ class ItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=> 'string|required'
+            'name'=> 'string|required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }
