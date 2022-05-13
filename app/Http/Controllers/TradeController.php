@@ -23,10 +23,10 @@ class TradeController extends Controller
         $user = $request->user();
 
         //get all trades related to user
-        $trade = Trade::with(['itemSendObject'=> function($query) use ($user){
+        $trade = Trade::with(['item_destination'=> function($query) use ($user){
             $query->where('user_id', '=', $user->id);
         }])->get();
-//        $trade = Trade::find(2)->itemSendObject->where('user_id',$user->id)->get();
+//        $trade = Trade::find(2)->item_destination->where('user_id',$user->id)->get();
 
         return response()->json($trade,200);
 
@@ -43,24 +43,24 @@ class TradeController extends Controller
         $user = $request->user();
 
         try {
-            $itemSend = Item::where('id','=',$payload->itemSend)->where('user_id','=',$user->id)->firstOrFail();
+            $item_destination = Item::where('id','=',$payload->item_destination_id)->where('user_id','=',$user->id)->firstOrFail();
 
 
-            $itemReceive = Item::findOrFail($payload->itemReceive);
+            $item_exchange = Item::findOrFail($payload->item_exchange_id);
         }
         catch (ModelNotFoundException) {
             return response()->json('item doesnt exist', 404);
         }
         //check if the item you taking is not yours
-        if ($itemReceive->user->id == $user->id)
+        if ($item_exchange->user->id == $user->id)
         {
             return response()->json('dont trade with your own inventory',400);
         }
-//        echo $itemReceive->user->id;
+//        echo $item_exchange->user->id;
         $trade = new Trade;
-        $trade['itemSend'] = $itemSend->id;
-        $trade['itemReceive'] = $itemReceive->id;
-        $trade['confirmation'] = $itemReceive->user->id;
+        $trade['item_destination_id'] = $item_destination->id;
+        $trade['item_exchange_id'] = $item_exchange->id;
+        $trade['confirmation'] = $item_exchange->user->id;
         $trade->save();
         return response()->json($trade,201);
 
@@ -77,7 +77,7 @@ class TradeController extends Controller
         $user = $request->user()->user;
         $trade = Trade::find($id);
 
-        if ($trade->itemSendObject->user->id == $user->id || $trade->itemReceiveObject->user->id == $user->id)
+        if ($trade->item_destination->user->id == $user->id || $trade->item_exchange->user->id == $user->id)
         {
             return response()->json($trade,200);
         }
@@ -96,10 +96,10 @@ class TradeController extends Controller
 
         $user = $request->user();
         try {
-            $itemSend = Item::where('id','=',$payload->itemSend)->where('user_id','=',$user->id)->firstOrFail();
+            $item_destination = Item::where('id','=',$payload->item_destination_id)->where('user_id','=',$user->id)->firstOrFail();
 
 
-            $itemReceive = Item::findOrFail($payload->itemReceive);
+            $item_exchange = Item::findOrFail($payload->item_exchange);
         }
         catch (ModelNotFoundException) {
             return response()->json('item doesnt exist', 404);
@@ -108,14 +108,14 @@ class TradeController extends Controller
 
 
         //check if the item you are taking is not yours
-        if ($itemReceive->user->id == $user->id)
+        if ($item_exchange->user->id == $user->id)
         {
             return response()->json('dont trade with your own inventory',400);
         }
         Trade::where('id','=',$id)->where('confirmation', '=', $user->id)->firstOrFail()->update([
-            'itemSend' => $itemSend->id,
-            'itemReceive' => $itemReceive->id,
-            'confirmation' => $itemReceive->user->id
+            'item_destination_id' => $item_destination->id,
+            'item_exchange_id' => $item_exchange->id,
+            'confirmation' => $item_exchange->user->id
         ]);
         //check if confirmation by the received user
         return response()->json('trade successfully',201);
@@ -143,16 +143,16 @@ class TradeController extends Controller
         }
         //we create new items
         Item::create([
-            'name' => $trade->itemSendObject->name,
-            'user_id'=> $trade->itemReceiveObject->user->id,
+            'name' => $trade->item_destination->name,
+            'user_id'=> $trade->item_exchange->user->id,
         ]);
         Item::create([
-            'name' => $trade->itemReceiveObject->name,
-            'user_id'=> $trade->itemSendObject->user->id,
+            'name' => $trade->item_exchange->name,
+            'user_id'=> $trade->item_destination->user->id,
         ]);
         //we delete items so any old connection of trade request to these items will be cascaded
-        Item::where('id', $trade->itemSendObject->id)->firstOrFail()->delete();
-        Item::where('id', $trade->itemReceiveObject->id)->firstOrFail()->delete();
+        Item::where('id', $trade->item_destination->id)->firstOrFail()->delete();
+        Item::where('id', $trade->item_exchange->id)->firstOrFail()->delete();
         $trade->delete();
         return response()->json('request has been confirmed successfully',201);
     }

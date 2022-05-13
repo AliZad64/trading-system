@@ -15,14 +15,14 @@ class Item extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function sendTrade()
+    public function trade_destination()
     {
-        return $this->hasMany(Trade::class,'itemSend');
+        return $this->hasMany(Trade::class,'item_destination_id');
     }
 
-    public function receiveTrade()
+    public function trade_exchange()
     {
-        return $this->hasMany(Trade::class,'itemReceive');
+        return $this->hasMany(Trade::class,'item_exchange_id');
     }
 
     public function allTrade()

@@ -11,12 +11,12 @@ class Trade extends Model
     use HasFactory;
 
 
-    public function itemSendObject()
+    public function item_destination()
     {
-        return $this->belongsTo(Item::class, 'itemSend', 'id');
+        return $this->belongsTo(Item::class, 'item_destination_id', 'id');
     }
-    public function itemReceiveObject()
+    public function item_exchange()
     {
-        return $this->belongsTo(Item::class, 'itemReceive', 'id');
+        return $this->belongsTo(Item::class, 'item_exchange_id', 'id');
     }
 }

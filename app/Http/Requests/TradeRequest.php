@@ -24,8 +24,8 @@ class TradeRequest extends FormRequest
     public function rules()
     {
         return [
-            'itemSend'=> 'int|required',
-            'itemReceive' => 'int|required'
+            'item_destination_id'=> 'int|required',
+            'item_exchange_id' => 'int|required'
         ];
     }
 }
