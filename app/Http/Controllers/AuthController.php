@@ -35,14 +35,14 @@ class AuthController extends Controller
     {
 
         $user = $request->user();
-        $profile = Profile::where('user_id',$user->id)->first();
-        $profile->birthdate = $updateValue->birthdate;
-        $profile->age = $updateValue->age;
-        $profile->save();
+        $user = Profile::where('user_id',$user->id)->first();
+        $user->birthdate = $updateValue->birthdate;
+        $user->age = $updateValue->age;
+        $user->save();
         return response()->json([
             'status'=> 'ok',
             'data'=>[
-                'profile'=> $profile,
+                'profile'=> $user,
             ]
 
         ], 201);
@@ -65,16 +65,12 @@ class AuthController extends Controller
             'password' => bcrypt($request['password']),
             'email' => $request['email']
         ]);
-        //after user creation we create new profile linked to that user
-        $profile = Profile::create([
-            'user_id' => $user->id
-        ]);
 
         $token = $user->createToken('tokens')->plainTextToken;
         return response()->json([
             'status'=> 'ok',
             'data'=>[
-                 'profile'=> $profile,
+                 'profile'=> $user,
                 'token' => $token,
                     ]
 

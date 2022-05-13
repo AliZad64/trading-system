@@ -15,11 +15,10 @@ return new class extends Migration
     {
         Schema::create('trades', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Profile::class, 'confirmation');
-            $table->foreignIdFor(\App\Models\Item::class, 'itemSend');
-            $table->foreignIdFor(\App\Models\Item::class, 'itemReceive');
-            $table->text('description')->nullable();
-            $table->enum('type',['waiting','success','failed'])->default('waiting');
+            $table->foreignIdFor(\App\Models\User::class, 'confirmation_id');
+            $table->foreignIdFor(\App\Models\Item::class, 'item_destination_id');
+            $table->foreignIdFor(\App\Models\Item::class, 'item_exchange_id');
+            $table->foreignIdFor(\App\Models\Status::class,'status_id');
             $table->timestamps();
         });
     }

@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Profile::class, 'profile_id');
+            $table->foreignIdFor(\App\Models\User::class, 'user_id');
             $table->string('name',255);
-            $table->text('tradedetail')->nullable();
-            $table->text('description')->nullable();
+            $table->string('image');
+            $table->string('more_images')->nullable();
             $table->timestamps();
         });
     }
