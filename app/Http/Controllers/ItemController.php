@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
 use App\Models\Item;
-use App\Models\Profile;
+
 use http\Client\Curl\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -23,8 +23,8 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $profile = $request->user()->profile;
-        return response()->json($profile->item, 200);
+        $user = $request->user();
+        return response()->json($user->item, 200);
     }
 
     /**
@@ -35,10 +35,10 @@ class ItemController extends Controller
      */
     public function store(Request $request ,ItemRequest $payload)
     {
-        $profile = $request->user()->profile;
+        $user = $request->user();
         $item = Item::create([
             'name' => $payload->name,
-            'profile_id' => $profile->id,
+            'user_id' => $user->id,
         ]);
         return response()->json($item,201);
     }
@@ -64,9 +64,9 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id, ItemRequest $payload)
     {
-        $profile = $request->user()->profile;
+        $user = $request->user();
         try {
-            $item = Item::where('id', $id)->where('profile_id', $profile->id)->firstOrFail();
+            $item = Item::where('id', $id)->where('user_id', $user->id)->firstOrFail();
         }
         catch (ModelNotFoundException) {
             return response()->json('item doesnt exist', 404);
@@ -88,9 +88,9 @@ class ItemController extends Controller
      */
     public function destroy(Request $request,$id)
     {
-        $profile = $request->user()->profile;
+        $user = $request->user();
         try {
-            $item = Item::where('id', $id)->where('profile_id', $profile->id)->firstOrFail();
+            $item = Item::where('id', $id)->where('user_id', $user->id)->firstOrFail();
         }
         catch (ModelNotFoundException) {
             return response()->json('item doesnt exist', 404);
