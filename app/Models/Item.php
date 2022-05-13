@@ -10,7 +10,7 @@ class Item extends Model
     public $fillable = ['profile_id','name','itemdetail','description'];
     use HasFactory;
 
-    public function profile()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
