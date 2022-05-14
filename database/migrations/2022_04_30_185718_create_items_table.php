@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\User::class, 'user_id');
             $table->string('name',255);
-            $table->string('image');
+            $table->json('image')->nullable();
             $table->string('more_images')->nullable();
             $table->timestamps();
         });

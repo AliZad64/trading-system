@@ -2,12 +2,21 @@
 
 namespace App\Models;
 
+use HusseinFeras\Laraimage\Traits\SingleColumnSingleImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-    public $fillable = ['profile_id','name','itemdetail','description'];
+    use SingleColumnSingleImage;
+
+    public $imageColumn = 'image';
+
+    protected $casts = [
+        'image' => 'json'
+    ];
+
+    public $fillable = ['user_id','name','itemdetail','description'];
     use HasFactory;
 
     public function user()
@@ -32,5 +41,10 @@ class Item extends Model
 
     }
         return $this->receiveTrade;
+    }
+
+    public function imagesPath()
+    {
+        return 'categories/images/'.$this->id;
     }
 }

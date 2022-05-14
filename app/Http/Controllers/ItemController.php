@@ -36,17 +36,21 @@ class ItemController extends Controller
      */
     public function store(Request $request ,ItemRequest $payload)
     {
-        $imageFile = $payload->image;
-        $path = $imageFile->store('public/images');
-        $name = $imageFile->getClientOriginalName();
+//        $imageFile = $payload->image;
+//
 //        $imageName = time().'.'.$payload->image->extension();
 //        $getImage = $payload->image;
 //        $getImage->move(public_path('images'), $imageName);
         $item = new Item();
         $item['user_id'] = $request->user()->id;
         $item['name'] = $payload->name;
-        $item['image'] = $path;
         $item->save();
+        echo $item->imageColumn;
+        echo $item->image;
+        $item2 = Item::find($item->id);
+        $item2->update(['image->key' => $payload->image]);
+        echo $item2->image;
+        echo $item2->imagesPath();
 
         //commented code doesn't work and i don't know why
 //        $item = Item::create([
@@ -54,7 +58,7 @@ class ItemController extends Controller
 //            'name' => $payload->name,
 //            'image' => "testing"
 //        ]);
-        return new ItemResource($item);
+        return new ItemResource($item2);
     }
 
     /**
@@ -89,6 +93,7 @@ class ItemController extends Controller
             return response()->json("the item is being used for trade requests right now",400);
         }
         $item->name = $payload->name;
+        $item->image = $payload->image;
         $item->save();
         return new ItemResource($item);
 
@@ -112,4 +117,6 @@ class ItemController extends Controller
         $item->delete();
         return response()->json('item deleted',201);
     }
+
+
 }

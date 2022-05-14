@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12524947d8c752f84bc21aaaede06bfa",
+    "content-hash": "03da9c4618c06b67602719a67c437ce9",
     "packages": [
         {
             "name": "brick/math",
@@ -892,6 +892,65 @@
                 }
             ],
             "time": "2022-03-20T21:55:58+00:00"
+        },
+        {
+            "name": "husseinferas/laraimage",
+            "version": "v1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/husseinferas/laraimage.git",
+                "reference": "94cc1b649fa00597347e179359c79959d50543ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/husseinferas/laraimage/zipball/94cc1b649fa00597347e179359c79959d50543ef",
+                "reference": "94cc1b649fa00597347e179359c79959d50543ef",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": ">=6.0",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "HusseinFeras\\Laraimage\\LaraimageServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "HusseinFeras\\Laraimage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hussein Feras",
+                    "email": "husseinferas12@gmail.com"
+                }
+            ],
+            "description": "A Laravel package that add a simple image functionality to any Laravel model",
+            "keywords": [
+                "image",
+                "imageable",
+                "laraimage",
+                "laravel",
+                "media"
+            ],
+            "support": {
+                "issues": "https://github.com/husseinferas/laraimage/issues",
+                "source": "https://github.com/husseinferas/laraimage/tree/v1.2.2"
+            },
+            "time": "2020-09-27T12:48:53+00:00"
         },
         {
             "name": "laravel/framework",
