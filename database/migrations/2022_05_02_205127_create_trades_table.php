@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class, 'confirmation_id');
             $table->foreignIdFor(\App\Models\Item::class, 'item_destination_id');
             $table->foreignIdFor(\App\Models\Item::class, 'item_exchange_id');
-            $table->foreignIdFor(\App\Models\Status::class,'status_id');
+            $table->enum('type',['waiting','success','cancelled'])->default('waiting');
             $table->timestamps();
         });
     }

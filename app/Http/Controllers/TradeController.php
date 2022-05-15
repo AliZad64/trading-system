@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TradeRequest;
+use App\Http\Resources\TradeResource;
 use App\Models\Item;
 
 use App\Models\Trade;
@@ -23,12 +24,20 @@ class TradeController extends Controller
         $user = $request->user();
 
         //get all trades related to user
-        $trade = Trade::with(['item_destination'=> function($query) use ($user){
-            $query->where('user_id', '=', $user->id);
-        }])->get();
-//        $trade = Trade::find(2)->item_destination->where('user_id',$user->id)->get();
+//        $trade = Trade::with(['item_destination'=> function($query) use ($user){
+//            $query->where('user_id', '=', $user->id);
+//        }])->get();
+        $sent_trade = Trade::whereHas('item_destination_id', function ($query) use ($user) {
+            $query->where('user_id',$user->id);
+        });
+        $received_trade = Trade::whereHas('item_exchange_id', function ($query) use ($user) {
+            $query->where('user_id',$user->id);
+        });
+        return response()->json([
+            'sent' => $sent_trade,
+            'confirm_trade' => $received_trade,
 
-        return response()->json($trade,200);
+        ],200);
 
     }
 
@@ -62,7 +71,7 @@ class TradeController extends Controller
         $trade['item_exchange_id'] = $item_exchange->id;
         $trade['confirmation'] = $item_exchange->user->id;
         $trade->save();
-        return response()->json($trade,201);
+        return new TradeResource($trade);
 
     }
 
@@ -79,7 +88,7 @@ class TradeController extends Controller
 
         if ($trade->item_destination->user->id == $user->id || $trade->item_exchange->user->id == $user->id)
         {
-            return response()->json($trade,200);
+            return new TradeResource($trade);
         }
         return response()->json("unauthorized",403);
     }
@@ -141,6 +150,7 @@ class TradeController extends Controller
         catch (ModelNotFoundException){
             return response()->json("trade request or confirmation not found", 404);
         }
+
         //we create new items
         Item::create([
             'name' => $trade->item_destination->name,

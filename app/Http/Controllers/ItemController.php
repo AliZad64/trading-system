@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ItemRequest;
 use App\Http\Resources\ItemResource;
 use App\Models\Item;
+use Illuminate\Support\Facades\Validator as Validator;
 
 use http\Client\Curl\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -34,7 +35,7 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request ,ItemRequest $payload)
+    public function store(ItemRequest $payload)
     {
 //        $imageFile = $payload->image;
 //
@@ -42,23 +43,24 @@ class ItemController extends Controller
 //        $getImage = $payload->image;
 //        $getImage->move(public_path('images'), $imageName);
         $item = new Item();
-        $item['user_id'] = $request->user()->id;
+        $item['user_id'] = $payload->user()->id;
         $item['name'] = $payload->name;
         $item->save();
-        echo $item->imageColumn;
-        echo $item->image;
-        $item2 = Item::find($item->id);
-        $item2->update(['image->key' => $payload->image]);
-        echo $item2->image;
-        echo $item2->imagesPath();
-
+        $x = $payload->image;
+        try {
+            $item->addImage($x);
+        }
+        catch (Exception $e)
+        {
+            return response()->json("error",400);
+        }
         //commented code doesn't work and i don't know why
 //        $item = Item::create([
 //            'user_id' => $request->user()->id,
 //            'name' => $payload->name,
 //            'image' => "testing"
 //        ]);
-        return new ItemResource($item2);
+        return new ItemResource($item);
     }
 
     /**
@@ -79,8 +81,9 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * weird bug
      */
-    public function update(Request $request, $id, ItemRequest $payload)
+    public function update(Request $request,ItemRequest $payload, $id)
     {
         $user = $request->user();
         try {
@@ -89,12 +92,13 @@ class ItemController extends Controller
         catch (ModelNotFoundException) {
             return response()->json('item doesnt exist', 404);
         }
-        if ($item->sendTrade->count() > 0 || $item->receiveTrade->count()> 0){
+        if ($item->trade_destination->count() > 0 || $item->trade_exchange->count()> 0){
             return response()->json("the item is being used for trade requests right now",400);
         }
         $item->name = $payload->name;
         $item->image = $payload->image;
         $item->save();
+
         return new ItemResource($item);
 
     }
