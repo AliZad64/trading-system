@@ -19,7 +19,7 @@ class TradeResource extends JsonResource
           'item_destination' => new ItemResource($this->item_destination),
           'item_exchange' => new ItemResource($this->item_exchange),
           'confirmation' => new UserResource($this->item_destination->user),
-          'status' => $this->status,
+          'status' => $this->type,
         ];
     }
 }

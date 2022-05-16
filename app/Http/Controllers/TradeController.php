@@ -27,10 +27,10 @@ class TradeController extends Controller
 //        $trade = Trade::with(['item_destination'=> function($query) use ($user){
 //            $query->where('user_id', '=', $user->id);
 //        }])->get();
-        $sent_trade = Trade::whereHas('item_destination_id', function ($query) use ($user) {
+        $sent_trade = Trade::whereHas('item_destination', function ($query) use ($user) {
             $query->where('user_id',$user->id);
         });
-        $received_trade = Trade::whereHas('item_exchange_id', function ($query) use ($user) {
+        $received_trade = Trade::whereHas('item_exchange', function ($query) use ($user) {
             $query->where('user_id',$user->id);
         });
         return response()->json([
@@ -53,7 +53,7 @@ class TradeController extends Controller
 
         try {
             $item_destination = Item::where('id','=',$payload->item_destination_id)->where('user_id','=',$user->id)->firstOrFail();
-
+            echo "test";
 
             $item_exchange = Item::findOrFail($payload->item_exchange_id);
         }
@@ -69,7 +69,7 @@ class TradeController extends Controller
         $trade = new Trade;
         $trade['item_destination_id'] = $item_destination->id;
         $trade['item_exchange_id'] = $item_exchange->id;
-        $trade['confirmation'] = $item_exchange->user->id;
+        $trade['confirmation_id'] = $item_exchange->user->id;
         $trade->save();
         return new TradeResource($trade);
 

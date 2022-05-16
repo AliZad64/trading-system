@@ -47,13 +47,7 @@ class ItemController extends Controller
         $item['name'] = $payload->name;
         $item->save();
         $x = $payload->image;
-        try {
-            $item->addImage($x);
-        }
-        catch (Exception $e)
-        {
-            return response()->json("error",400);
-        }
+
         //commented code doesn't work and i don't know why
 //        $item = Item::create([
 //            'user_id' => $request->user()->id,
@@ -83,9 +77,9 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      * weird bug
      */
-    public function update(Request $request,ItemRequest $payload, $id)
+    public function update(ItemRequest $payload, $id)
     {
-        $user = $request->user();
+        $user = $payload->user();
         try {
             $item = Item::where('id', $id)->where('user_id', $user->id)->firstOrFail();
         }
